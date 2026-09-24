@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evaluation-record.schema.json",
+  "title": "Product Visual Reproduction Evaluation",
+  "type": "object",
+  "required": ["schema_version", "evaluation_id", "created_at", "mode", "prompt_version", "visual_spec_version", "target_image_ids", "output_image_ids", "generation_conditions", "dimensions", "hard_gates", "result"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "evaluation_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "mode": { "enum": ["exact_replay", "style_transfer", "prompt_regression", "cross_image_consistency"] },
+    "prompt_version": { "type": "string" },
+    "visual_spec_version": { "type": "string" },
+    "target_image_ids": { "type": "array", "items": { "type": "string" } },
+    "output_image_ids": { "type": "array", "items": { "type": "string" } },
+    "generation_conditions": {
+      "type": "object",
+      "required": ["model", "reference_images_used", "settings_recorded"],
+      "properties": {
+        "model": { "type": ["string", "null"] },
+        "reference_images_used": { "type": "boolean" },
+        "settings_recorded": { "type": "boolean" },
+        "parameters": { "type": "object", "additionalProperties": true },
+        "seed": { "type": ["integer", "null"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "weight", "score", "evidence"],
+        "properties": {
+          "name": { "type": "string" },
+          "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+          "score": { "type": ["integer", "null"], "minimum": 0, "maximum": 4 },
+          "evidence": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "visual_reproduction_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+    "hard_gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status", "evidence"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "enum": ["pass", "fail", "not_applicable", "unverified"] },
+          "evidence": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "result": { "enum": ["pass", "fail", "not_run", "inconclusive"] },
+    "next_changes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

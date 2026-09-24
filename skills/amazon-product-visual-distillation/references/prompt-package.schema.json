@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prompt-package.schema.json",
+  "title": "Versioned Product Image Prompt Package",
+  "type": "object",
+  "required": ["schema_version", "prompt_version", "created_at", "product_id", "visual_spec_version", "slot_id", "target", "prompt", "preserve", "change_allowed", "change_note"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "prompt_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "product_id": { "type": "string" },
+    "visual_spec_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "slot_id": { "type": "string" },
+    "target": {
+      "type": "object",
+      "required": ["model", "marketplace"],
+      "properties": {
+        "model": { "type": ["string", "null"] },
+        "marketplace": { "type": ["string", "null"] },
+        "aspect_ratio": { "type": ["string", "null"] },
+        "output_size": { "type": ["string", "null"] },
+        "parameters": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": false
+    },
+    "source_ids": { "type": "array", "items": { "type": "string" } },
+    "prompt": { "type": "string", "minLength": 1 },
+    "negative_prompt": { "type": ["string", "null"] },
+    "preserve": { "type": "array", "items": { "type": "string" } },
+    "change_allowed": { "type": "array", "items": { "type": "string" } },
+    "change_note": { "type": "string", "minLength": 1 },
+    "parent_prompt_version": { "type": ["string", "null"], "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "evaluation_ids": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

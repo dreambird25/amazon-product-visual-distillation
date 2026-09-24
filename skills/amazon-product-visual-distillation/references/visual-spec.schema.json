@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "visual-spec.schema.json",
+  "title": "Amazon Product Visual Specification",
+  "type": "object",
+  "required": ["schema_version", "spec_version", "product_id", "marketplace", "source_assets", "product_truth", "visual_style", "image_plan", "policy_review"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "spec_version": { "$ref": "#/$defs/version" },
+    "product_id": { "type": "string", "minLength": 1 },
+    "product_revision": { "type": ["string", "null"] },
+    "marketplace": { "type": ["string", "null"], "description": "Amazon store/marketplace; null means not yet confirmed." },
+    "created_at": { "type": "string", "format": "date-time" },
+    "parent_spec_version": { "type": ["string", "null"] },
+    "source_assets": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "product_truth": { "type": "array", "items": { "$ref": "#/$defs/fact" } },
+    "visual_style": {
+      "type": "object",
+      "required": ["composition", "palette", "lighting", "materials", "art_direction", "repeated_anchors"],
+      "properties": {
+        "composition": { "type": "array", "items": { "$ref": "#/$defs/observation" } },
+        "palette": { "type": "array", "items": { "$ref": "#/$defs/observation" } },
+        "lighting": { "type": "array", "items": { "$ref": "#/$defs/observation" } },
+        "materials": { "type": "array", "items": { "$ref": "#/$defs/observation" } },
+        "art_direction": { "type": "array", "items": { "$ref": "#/$defs/observation" } },
+        "typography": { "type": "array", "items": { "$ref": "#/$defs/observation" } },
+        "repeated_anchors": { "type": "array", "items": { "$ref": "#/$defs/observation" } }
+      },
+      "additionalProperties": false
+    },
+    "image_plan": { "type": "array", "items": { "$ref": "#/$defs/slot" }, "minItems": 1 },
+    "policy_review": {
+      "type": "object",
+      "required": ["status", "marketplace", "checked_at", "sources"],
+      "properties": {
+        "status": { "enum": ["verified", "partial", "unverified"] },
+        "marketplace": { "type": ["string", "null"] },
+        "checked_at": { "type": ["string", "null"], "format": "date" },
+        "sources": { "type": "array", "items": { "type": "string", "format": "uri" } },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "change_log": { "type": "array", "items": { "$ref": "#/$defs/change" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "source": {
+      "type": "object",
+      "required": ["source_id", "kind", "purpose", "locator"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "kind": { "enum": ["product_document", "product_photo", "listing_image", "a_plus_image", "policy", "generated_image", "other"] },
+        "purpose": { "enum": ["product_truth", "visual_reference", "policy", "evaluation_target", "evaluation_output", "other"] },
+        "locator": { "type": "string" },
+        "captured_at": { "type": ["string", "null"], "format": "date-time" },
+        "sha256": { "type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "fact": {
+      "type": "object",
+      "required": ["field", "value", "status", "evidence"],
+      "properties": {
+        "field": { "type": "string" },
+        "value": {},
+        "status": { "enum": ["confirmed", "inferred", "unknown", "disputed"] },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": ["observation", "status", "evidence"],
+      "properties": {
+        "observation": { "type": "string" },
+        "status": { "enum": ["observed", "inferred", "unknown"] },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "slot": {
+      "type": "object",
+      "required": ["slot_id", "channel", "role", "objective", "preserve", "change_allowed", "policy_status"],
+      "properties": {
+        "slot_id": { "type": "string" },
+        "channel": { "enum": ["listing_carousel", "a_plus", "other"] },
+        "role": { "type": "string" },
+        "objective": { "type": "string" },
+        "reference_source_ids": { "type": "array", "items": { "type": "string" } },
+        "preserve": { "type": "array", "items": { "type": "string" } },
+        "change_allowed": { "type": "array", "items": { "type": "string" } },
+        "exact_text": { "type": ["string", "null"], "description": "Only user-approved text intended for a channel where text is permitted." },
+        "policy_status": { "enum": ["verified", "partial", "unverified", "not_applicable"] },
+        "open_questions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "change": {
+      "type": "object",
+      "required": ["version", "changed_fields", "reason"],
+      "properties": {
+        "version": { "$ref": "#/$defs/version" },
+        "changed_fields": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string" },
+        "evaluation_id": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}
