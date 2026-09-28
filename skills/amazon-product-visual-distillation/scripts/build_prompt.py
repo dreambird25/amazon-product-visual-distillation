@@ -65,7 +65,7 @@ def main() -> None:
         "",
         f"版本：{args.version}  |  复测状态：{args.status}",
         "",
-        "[网页端与桌面 Agent 手动测试步骤](manual-test.md)",
+        "[网页端与桌面 Agent 手动测试步骤](manual-test-guide.md)",
         "",
         "## 可复制文字提示词",
         "",
